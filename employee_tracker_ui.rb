@@ -112,6 +112,9 @@ end
 def project_menu
   puts "Press 'a' to add a new project"
   puts "Press 'l' to list all the projects in the company database"
+  puts "Press 'd' to mark a project as done"
+  puts "Press 'c' to view your completed projects"
+  puts "'m' - main menu"
 
   input = gets.chomp
   case input
@@ -119,6 +122,10 @@ def project_menu
     project_add
   when 'l'
     project_list
+  when 'd'
+    mark_as_done
+  when 'c'
+    completed_list
   when 'm'
     main_menu
   else
@@ -130,7 +137,7 @@ end
 def project_add
   puts "What project would you like to add to the company database "
   name = gets.chomp
-  project = Project.new({:name => name})
+  project = Project.new({:name => name, :completed => false})
   project.save
   puts "'#{name}' has been added to your database"
   project_menu
@@ -151,8 +158,27 @@ def add_employee_to_project
   project_list
 end
 
-def project_list
+def mark_as_done
+  puts "Which project do you want to mark as done?"
+  Project.all.each {|project| puts project.name}
 
+  done_project_name = gets.chomp
+  done_project = Project.where({:name => done_project_name}).first
+  done_project.update({:completed => true})
+  project_menu
+end
+
+def completed_list
+  puts "Completed Projects:"
+  list = Project.where({:completed => true})
+  list.each do |completed|
+
+    puts "* #{completed.name}"
+  end
+  project_menu
+end
+
+def project_list
 
   puts "Project List: \n"
   list = Project.all
